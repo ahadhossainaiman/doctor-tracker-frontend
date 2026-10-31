@@ -35,7 +35,7 @@ export function ChartCard({
   const [showData, setShowData] = useState(false);
 
   return (
-    <section className="@container rounded-card border border-border bg-surface-raised p-5 shadow-card">
+    <section className="lift-card @container rounded-card border border-border bg-surface-raised p-5 shadow-card">
       <div className="flex flex-col gap-3 @md:flex-row @md:items-center @md:justify-between">
         <h2 className="text-xl font-semibold tracking-tight text-text">{title}</h2>
         <div className="flex flex-wrap items-center gap-2">

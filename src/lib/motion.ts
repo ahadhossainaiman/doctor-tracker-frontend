@@ -3,6 +3,7 @@
 import { useReducedMotion, type Transition, type Variants } from "motion/react";
 
 export const easeOut = [0.22, 1, 0.36, 1] as const;
+export const springSoft = { type: "spring", stiffness: 380, damping: 32, mass: 0.8 } as const;
 
 export const motionDuration = {
   fast: 0.15,
@@ -16,17 +17,27 @@ export const enterTransition: Transition = {
 };
 
 export const fadeRise: Variants = {
-  hidden: { opacity: 0, y: 8 },
+  hidden: { opacity: 0, y: 10 },
   visible: { opacity: 1, y: 0, transition: enterTransition },
+};
+
+export const fadeScale: Variants = {
+  hidden: { opacity: 0, scale: 0.98 },
+  visible: { opacity: 1, scale: 1, transition: enterTransition },
 };
 
 export const stagger: Variants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.04 } },
+  visible: { transition: { staggerChildren: 0.04, delayChildren: 0.02 } },
+};
+
+export const listItem: Variants = {
+  hidden: { opacity: 0, y: 8 },
+  visible: { opacity: 1, y: 0, transition: enterTransition },
 };
 
 export const sheet: Variants = {
-  hidden: { opacity: 0, y: 16 },
+  hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
     y: 0,

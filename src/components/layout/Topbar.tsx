@@ -43,8 +43,8 @@ export function Topbar({ onOpenMenu }: { onOpenMenu: () => void }) {
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-30 border-b border-border bg-surface-raised">
-      <div className="flex h-16 w-full items-center gap-2 px-4 md:gap-3 md:px-8">
+    <header className="sticky top-0 z-30 border-b border-border bg-surface-raised/85 backdrop-blur-xl">
+      <div className="flex h-14 w-full items-center gap-2 px-4 sm:h-16 sm:gap-3 sm:px-6 md:px-8 xl:px-10">
         <Button
           type="button"
           variant="outline"

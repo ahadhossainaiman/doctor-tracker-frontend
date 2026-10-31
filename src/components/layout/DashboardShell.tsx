@@ -28,7 +28,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
           <Suspense fallback={<TopbarFallback />}>
             <Topbar onOpenMenu={() => setMenuOpen(true)} />
           </Suspense>
-          <div id="main" className="flex-1 pb-14 md:pb-0">
+          <div id="main" className="flex-1 pb-[calc(3.5rem+env(safe-area-inset-bottom))] md:pb-0">
             {children}
           </div>
         </div>

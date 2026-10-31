@@ -56,14 +56,18 @@ export function Pagination({
         </button>
         {items.map((item, index) =>
           item === "gap" ? (
-            <span key={`gap-${index}`} className="px-1 text-sm text-text-muted" aria-hidden="true">
+            <span
+              key={`gap-${index}`}
+              className="hidden px-1 text-sm text-text-muted min-[480px]:inline"
+              aria-hidden="true"
+            >
               …
             </span>
           ) : (
             <button
               key={item}
               type="button"
-              className={`${pageButtonClass} min-w-11 tabular-nums`}
+              className={`${pageButtonClass} min-w-11 tabular-nums ${item === current ? "" : "hidden min-[480px]:inline-flex"}`}
               aria-current={item === current ? "page" : undefined}
               onClick={() => onPageChange(item)}
             >

@@ -1,6 +1,7 @@
 "use client";
 
 import { LayoutDashboard, Stethoscope, Users } from "lucide-react";
+import { LayoutGroup, motion } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -28,50 +29,64 @@ export function MobileBottomNav({
   const pathname = usePathname();
 
   return (
-    <nav
-      aria-label="Primary"
-      className={cn(
-        "grid grid-cols-3 border-t border-border bg-surface-raised",
-        className,
-      )}
-    >
-      {items.map((item) => {
-        const Icon = item.icon;
-        const active = onSelect
-          ? item.id === (activeId ?? "dashboard")
-          : isNavActive(pathname, item.href);
-        const itemClass = cn(
-          "flex h-14 flex-col items-center justify-center gap-1 text-xs focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none",
-          active ? "text-brand" : "text-text-muted",
-        );
+    <LayoutGroup id="mobile-nav">
+      <nav
+        aria-label="Primary"
+        className={cn(
+          "grid grid-cols-3 border-t border-border bg-surface-raised/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl",
+          className,
+        )}
+      >
+        {items.map((item) => {
+          const Icon = item.icon;
+          const active = onSelect
+            ? item.id === (activeId ?? "dashboard")
+            : isNavActive(pathname, item.href);
+          const itemClass = cn(
+            "relative flex h-14 flex-col items-center justify-center gap-1 text-xs focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none",
+            active ? "text-brand" : "text-text-muted",
+          );
 
-        if (onSelect) {
+          const body = (
+            <>
+              {active ? (
+                <motion.span
+                  layoutId="mobile-active"
+                  className="absolute inset-x-4 inset-y-1 rounded-xl bg-accent"
+                  transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                />
+              ) : null}
+              <Icon className="relative z-10 size-5" aria-hidden="true" />
+              <span className="relative z-10">{item.label}</span>
+            </>
+          );
+
+          if (onSelect) {
+            return (
+              <button
+                key={item.id}
+                type="button"
+                className={itemClass}
+                aria-current={active ? "page" : undefined}
+                onClick={() => onSelect(item.id)}
+              >
+                {body}
+              </button>
+            );
+          }
+
           return (
-            <button
+            <Link
               key={item.id}
-              type="button"
+              href={item.href}
               className={itemClass}
               aria-current={active ? "page" : undefined}
-              onClick={() => onSelect(item.id)}
             >
-              <Icon className="size-5" aria-hidden="true" />
-              {item.label}
-            </button>
+              {body}
+            </Link>
           );
-        }
-
-        return (
-          <Link
-            key={item.id}
-            href={item.href}
-            className={itemClass}
-            aria-current={active ? "page" : undefined}
-          >
-            <Icon className="size-5" aria-hidden="true" />
-            {item.label}
-          </Link>
-        );
-      })}
-    </nav>
+        })}
+      </nav>
+    </LayoutGroup>
   );
 }

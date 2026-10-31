@@ -1,8 +1,9 @@
 import { ListSkeleton, StatCardSkeleton } from "@/components/shared/Skeletons";
+import { pageClass } from "@/lib/page";
 
 export default function DashboardLoading() {
   return (
-    <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-6 px-4 py-6 md:px-8">
+    <div className={pageClass}>
       <div className="space-y-2" role="status" aria-live="polite">
         <span className="sr-only">Loading page</span>
         <div className="h-8 w-40 animate-pulse rounded-md bg-muted" />

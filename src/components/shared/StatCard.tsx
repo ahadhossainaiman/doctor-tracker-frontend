@@ -66,7 +66,7 @@ export function StatCard({
           : "text-text-muted";
 
   return (
-    <article className="@container rounded-card border border-border bg-surface-raised p-5 shadow-card">
+    <article className="lift-card @container rounded-card border border-border bg-surface-raised p-5 shadow-card">
       <h2 className="text-sm font-medium text-text-muted">{label}</h2>
       <p className="mt-2 text-3xl font-semibold tracking-tight text-text tabular-nums">
         {value}

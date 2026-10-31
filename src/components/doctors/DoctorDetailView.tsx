@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 
+import { PageFrame } from "@/components/layout/PageFrame";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { AddPatientDialog } from "@/components/patients/AddPatientDialog";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
@@ -23,8 +24,6 @@ import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import { formatCount, formatGender, formatUtcDate } from "@/lib/format";
 
 const NO_FILTERS = [] as const;
-
-const pageClass = "mx-auto flex w-full max-w-[1440px] flex-col gap-6 px-4 py-6 md:px-8";
 
 export function DoctorDetailView({ id }: { id: string }) {
   const url = useUrlState(NO_FILTERS);
@@ -58,12 +57,13 @@ export function DoctorDetailView({ id }: { id: string }) {
       className: "tabular-nums",
       cell: (patient) => formatCount(patient.age),
     },
-    { id: "gender", header: "Gender", cell: (patient) => formatGender(patient.gender) },
-    { id: "phone", header: "Phone", cell: (patient) => patient.phone },
+    { id: "gender", header: "Gender", hideBelow: "lg", cell: (patient) => formatGender(patient.gender) },
+    { id: "phone", header: "Phone", hideBelow: "xl", cell: (patient) => patient.phone },
     { id: "condition", header: "Condition", cell: (patient) => patient.condition },
     {
       id: "registered",
       header: "Registered",
+      hideBelow: "lg",
       cell: (patient) => (
         <time dateTime={patient.registeredAt} title={patient.registeredAt}>
           {formatUtcDate(patient.registeredAt)}
@@ -74,29 +74,29 @@ export function DoctorDetailView({ id }: { id: string }) {
 
   if (doctor.isPending) {
     return (
-      <div className={pageClass}>
+      <PageFrame>
         <ListSkeleton rows={8} />
-      </div>
+      </PageFrame>
     );
   }
 
   if (doctor.isError || !doctor.data) {
     const missing = doctor.error instanceof ApiError && doctor.error.status === 404;
     return (
-      <div className={pageClass}>
+      <PageFrame>
         <ErrorState
           title={missing ? "Doctor not found" : "Could not load this doctor"}
           description={apiErrorMessage(doctor.error)}
           onRetry={() => void doctor.refetch()}
         />
-      </div>
+      </PageFrame>
     );
   }
 
   const profile = doctor.data;
 
   return (
-    <div className={pageClass}>
+    <PageFrame>
       <PageHeader
         title={profile.name}
         description={`${profile.specialization} · ${profile.hospital}`}
@@ -106,7 +106,7 @@ export function DoctorDetailView({ id }: { id: string }) {
           </Button>
         }
       />
-      <dl className="grid gap-4 rounded-card border border-border bg-surface-raised p-5 shadow-card sm:grid-cols-2 lg:grid-cols-3">
+      <dl className="lift-card grid gap-4 rounded-card border border-border bg-surface-raised p-4 shadow-card min-[480px]:p-5 sm:grid-cols-2 lg:grid-cols-4">
         <ProfileItem label="Phone">
           <a className="underline-offset-4 hover:underline focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none" href={`tel:${profile.phone}`}>
             {profile.phone}
@@ -240,7 +240,7 @@ export function DoctorDetailView({ id }: { id: string }) {
           });
         }}
       />
-    </div>
+    </PageFrame>
   );
 }
 

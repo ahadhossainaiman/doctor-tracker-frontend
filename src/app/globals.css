@@ -62,6 +62,7 @@
   --text-3xl: 2rem;
   --text-3xl--line-height: 2.4rem;
   --spacing: 4px;
+  --breakpoint-xs: 22.5rem;
   --shadow-card: var(--elevation-card);
   --shadow-overlay: var(--elevation-overlay);
   --color-success-text: var(--success-text);
@@ -160,6 +161,47 @@
   }
 }
 
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 180ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.lift-card {
+  transition:
+    transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .lift-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--elevation-overlay);
+  }
+}
+
+.login-orb {
+  animation: orb-drift 14s ease-in-out infinite;
+}
+
+.login-orb-delay {
+  animation-delay: -6s;
+}
+
+@keyframes orb-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(6%, -8%, 0) scale(1.08);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -168,5 +210,14 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  @view-transition {
+    navigation: none;
+  }
+
+  .lift-card,
+  .lift-card:hover {
+    transform: none;
   }
 }

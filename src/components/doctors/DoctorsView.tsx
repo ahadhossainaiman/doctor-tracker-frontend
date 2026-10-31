@@ -5,6 +5,7 @@ import { useEffect, useId, useMemo } from "react";
 import Link from "next/link";
 
 import { AddDoctorDialog } from "@/components/doctors/AddDoctorDialog";
+import { PageFrame } from "@/components/layout/PageFrame";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { DateRangePicker } from "@/components/shared/DateRangePicker";
@@ -25,8 +26,6 @@ import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import { formatCount, formatUtcDate } from "@/lib/format";
 
 const DOCTOR_FILTERS = ["specialization", "hospital"] as const;
-
-const pageClass = "mx-auto flex w-full max-w-[1440px] flex-col gap-6 px-4 py-6 md:px-8";
 
 export function DoctorsView() {
   const formId = useId();
@@ -100,9 +99,9 @@ export function DoctorsView() {
       ),
     },
     { id: "specialization", header: "Specialization", cell: (doctor) => doctor.specialization },
-    { id: "hospital", header: "Hospital", cell: (doctor) => doctor.hospital },
-    { id: "phone", header: "Phone", cell: (doctor) => doctor.phone },
-    { id: "email", header: "Email", cell: (doctor) => doctor.email },
+    { id: "hospital", header: "Hospital", hideBelow: "lg", cell: (doctor) => doctor.hospital },
+    { id: "phone", header: "Phone", hideBelow: "xl", cell: (doctor) => doctor.phone },
+    { id: "email", header: "Email", hideBelow: "xl", cell: (doctor) => doctor.email },
     {
       id: "patients",
       header: "Patients",
@@ -114,6 +113,7 @@ export function DoctorsView() {
       id: "created",
       header: "Created",
       sortKey: "createdAt",
+      hideBelow: "lg",
       cell: (doctor) => (
         <time dateTime={doctor.createdAt} title={doctor.createdAt}>
           {formatUtcDate(doctor.createdAt)}
@@ -123,7 +123,7 @@ export function DoctorsView() {
   ];
 
   return (
-    <div className={pageClass}>
+    <PageFrame>
       <PageHeader
         title="Doctors"
         description="Search by name, specialization, or hospital. Dates filter when the doctor was added."
@@ -233,7 +233,7 @@ export function DoctorsView() {
         </div>
       )}
       <AddDoctorDialog open={create === "1"} onOpenChange={(next) => void setCreate(next ? "1" : null)} />
-    </div>
+    </PageFrame>
   );
 }
 

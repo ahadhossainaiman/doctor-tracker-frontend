@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
+import { motion } from "motion/react";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -9,6 +10,7 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { authErrorMessage, useLogin } from "@/features/auth/hooks";
 import { loginSchema, type LoginInput } from "@/features/auth/schema";
+import { fadeScale, useSafeVariants } from "@/lib/motion";
 
 export function LoginForm() {
   const searchParams = useSearchParams();
@@ -25,10 +27,14 @@ export function LoginForm() {
   });
 
   const serverError = login.error ? authErrorMessage(login.error) : null;
+  const variants = useSafeVariants(fadeScale);
 
   return (
-    <form
-      className="w-full max-w-md rounded-card border border-border bg-surface-raised p-6 shadow-card sm:p-8"
+    <motion.form
+      variants={variants}
+      initial="hidden"
+      animate="visible"
+      className="w-full max-w-md rounded-card border border-border bg-surface-raised/90 p-5 shadow-overlay backdrop-blur-xl min-[480px]:p-6 sm:p-8"
       onSubmit={handleSubmit((values) => login.submit(values, searchParams.get("next")))}
       noValidate
     >
@@ -106,6 +112,6 @@ export function LoginForm() {
       <Button type="submit" className="mt-6 h-11 w-full" disabled={login.isPending}>
         {login.isPending ? "Signing in" : "Sign in"}
       </Button>
-    </form>
+    </motion.form>
   );
 }

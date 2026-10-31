@@ -100,7 +100,7 @@ export function FilterBar({
       {open ? (
         <button
           type="button"
-          className="fixed inset-0 z-40 bg-black/10 md:hidden"
+          className="fixed inset-0 z-40 bg-black/10 duration-150 animate-in fade-in md:hidden"
           aria-label="Close filters"
           onClick={() => setOpen(false)}
         />
@@ -113,7 +113,7 @@ export function FilterBar({
         className={cn(
           "md:static md:z-auto md:block md:max-h-none md:overflow-visible md:rounded-none md:border-0 md:bg-transparent md:p-0 md:shadow-none md:backdrop-blur-none",
           open
-            ? "fixed inset-x-0 bottom-0 z-50 max-h-[85svh] overflow-y-auto rounded-t-sheet border border-border bg-popover/85 p-4 pb-6 text-text shadow-overlay backdrop-blur-xl"
+            ? "fixed inset-x-0 bottom-0 z-50 max-h-[85svh] overflow-y-auto rounded-t-sheet border border-border bg-popover/85 p-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] text-text shadow-overlay backdrop-blur-xl duration-200 animate-in fade-in slide-in-from-bottom-4"
             : "hidden",
         )}
       >

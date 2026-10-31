@@ -1,6 +1,7 @@
 "use client";
 
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { LayoutGroup, motion } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -19,7 +20,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     <aside
       className={cn(
         "sticky top-0 hidden h-svh shrink-0 flex-col border-r border-border bg-surface-raised transition-[width] duration-200 ease-out md:flex",
-        collapsed ? "w-[72px]" : "w-[264px]",
+        collapsed ? "w-[72px] lg:w-[72px]" : "w-[220px] lg:w-[240px] xl:w-[264px]",
       )}
     >
       <div className="flex h-16 items-center border-b border-border px-3">
@@ -31,30 +32,41 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           {collapsed ? <span aria-hidden="true">DT</span> : <span className="truncate">Doctor Tracker</span>}
         </Link>
       </div>
-      <nav aria-label="Primary" className="flex flex-1 flex-col gap-1 p-3">
-        {primaryNav.map((item) => {
-          const Icon = item.icon;
-          const active = isNavActive(pathname, item.href);
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              aria-current={active ? "page" : undefined}
-              title={collapsed ? item.label : undefined}
-              className={cn(
-                "flex h-11 items-center gap-3 rounded-lg px-3 text-sm transition-colors duration-150 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none",
-                collapsed && "justify-center px-0",
-                active
-                  ? "bg-accent font-medium text-brand"
-                  : "text-text-muted hover:bg-muted hover:text-text",
-              )}
-            >
-              <Icon className="size-5 shrink-0" aria-hidden="true" />
-              <span className={collapsed ? "sr-only" : "truncate"}>{item.label}</span>
-            </Link>
-          );
-        })}
-      </nav>
+      <LayoutGroup id="sidebar-nav">
+        <nav aria-label="Primary" className="flex flex-1 flex-col gap-1 p-3">
+          {primaryNav.map((item) => {
+            const Icon = item.icon;
+            const active = isNavActive(pathname, item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={active ? "page" : undefined}
+                title={collapsed ? item.label : undefined}
+                className={cn(
+                  "relative flex h-11 items-center gap-3 rounded-lg px-3 text-sm transition-colors duration-150 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none",
+                  collapsed && "justify-center px-0",
+                  active
+                    ? "font-medium text-brand"
+                    : "text-text-muted hover:bg-muted hover:text-text",
+                )}
+              >
+                {active ? (
+                  <motion.span
+                    layoutId="sidebar-active"
+                    className="absolute inset-0 rounded-lg bg-accent"
+                    transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                  />
+                ) : null}
+                <Icon className="relative z-10 size-5 shrink-0" aria-hidden="true" />
+                <span className={cn("relative z-10", collapsed ? "sr-only" : "truncate")}>
+                  {item.label}
+                </span>
+              </Link>
+            );
+          })}
+        </nav>
+      </LayoutGroup>
       <div className="border-t border-border p-3">
         <button
           type="button"

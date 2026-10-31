@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
+import { PageFrame } from "@/components/layout/PageFrame";
 import { PageHeader } from "@/components/layout/PageHeader";
 
 export const metadata: Metadata = {
@@ -8,11 +10,13 @@ export const metadata: Metadata = {
 
 export default function PatientsPage() {
   return (
-    <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-6 px-4 py-6 md:px-8">
-      <PageHeader
-        title="Patients"
-        description="The patient list, search, and filters will show here."
-      />
-    </div>
+    <Suspense>
+      <PageFrame>
+        <PageHeader
+          title="Patients"
+          description="The patient list, search, and filters will show here."
+        />
+      </PageFrame>
+    </Suspense>
   );
 }
