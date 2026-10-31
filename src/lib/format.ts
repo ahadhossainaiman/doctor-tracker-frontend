@@ -13,6 +13,13 @@ export function formatCount(value: number) {
   return new Intl.NumberFormat(undefined).format(value);
 }
 
+export function toDateInput(value: string) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value.slice(0, 10);
+  return date.toISOString().slice(0, 10);
+}
+
 export function formatGender(gender: string) {
   if (gender === "male") return "Male";
   if (gender === "female") return "Female";

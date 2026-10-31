@@ -1,23 +1,103 @@
 "use client";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { doctorKeys } from "@/features/doctors/hooks";
 import type { Doctor } from "@/features/doctors/types";
 import { invalidateCareQueries } from "@/lib/invalidate";
+import { listQueryOptions } from "@/lib/list-query";
 
-import { createPatient, deleteDoctorPatient } from "./api";
-import type { CreatePatientInput, PatientListResult } from "./types";
+import {
+  createPatient,
+  deleteDoctorPatient,
+  deletePatient,
+  getPatient,
+  listPatients,
+  updatePatient,
+} from "./api";
+import type { CreatePatientInput, PatientListQuery, PatientListResult, UpdatePatientInput } from "./types";
 
 export const patientKeys = {
   all: ["patients"] as const,
+  list: (query: PatientListQuery) => ["patients", "list", query] as const,
+  detail: (id: string) => ["patients", "detail", id] as const,
 };
+
+export function usePatients(query: PatientListQuery) {
+  return useQuery({
+    queryKey: patientKeys.list(query),
+    queryFn: () => listPatients(query),
+    ...listQueryOptions,
+  });
+}
+
+export function usePatient(id: string) {
+  return useQuery({
+    queryKey: patientKeys.detail(id),
+    queryFn: () => getPatient(id),
+    enabled: id.length > 0,
+  });
+}
 
 export function useCreatePatient(doctorId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (input: CreatePatientInput) => createPatient(doctorId, input),
+    onSettled: () => {
+      void invalidateCareQueries(queryClient);
+    },
+  });
+}
+
+export function useCreateAnyPatient() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ doctorId, input }: { doctorId: string; input: CreatePatientInput }) =>
+      createPatient(doctorId, input),
+    onSettled: () => {
+      void invalidateCareQueries(queryClient);
+    },
+  });
+}
+
+export function useUpdatePatient(id: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (input: UpdatePatientInput) => updatePatient(id, input),
+    onSettled: () => {
+      void invalidateCareQueries(queryClient);
+    },
+  });
+}
+
+export function useDeletePatient() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (patientId: string) => deletePatient(patientId),
+    onMutate: async (patientId) => {
+      await queryClient.cancelQueries({ queryKey: patientKeys.all });
+      const previous = queryClient.getQueriesData<PatientListResult>({ queryKey: patientKeys.all });
+
+      queryClient.setQueriesData<PatientListResult>({ queryKey: ["patients", "list"] }, (current) => {
+        if (!current) return current;
+        const data = current.data.filter((patient) => patient.id !== patientId);
+        if (data.length === current.data.length) return current;
+        const total = Math.max(0, current.meta.total - 1);
+        const totalPages = current.meta.limit > 0 ? Math.ceil(total / current.meta.limit) : 0;
+        return { data, meta: { ...current.meta, total, totalPages } };
+      });
+
+      return { previous };
+    },
+    onError: (_error, _patientId, context) => {
+      for (const [key, data] of context?.previous ?? []) {
+        queryClient.setQueryData(key, data);
+      }
+    },
     onSettled: () => {
       void invalidateCareQueries(queryClient);
     },

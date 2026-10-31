@@ -9,8 +9,6 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { toast } from "sonner";
-
 import {
   Dialog,
   DialogContent,
@@ -156,7 +154,12 @@ function CommandPaletteDialog({
                       router.push(`/doctors?${params.toString()}`);
                       return;
                     }
-                    toast("Open a doctor, then add a patient.");
+                    const onPatients = window.location.pathname === "/patients";
+                      const params = new URLSearchParams(
+                        onPatients ? window.location.search : "",
+                      );
+                      params.set("create", "1");
+                      router.push(`/patients?${params.toString()}`);
                   }}
                 >
                   {item}

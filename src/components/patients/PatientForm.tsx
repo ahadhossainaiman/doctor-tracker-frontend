@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useId } from "react";
+import { useId, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { FormField } from "@/components/shared/FormField";
@@ -14,10 +14,20 @@ import {
 } from "@/features/patients/schema";
 import type { CreatePatientInput } from "@/features/patients/types";
 
+type DoctorOption = {
+  id: string;
+  name: string;
+};
+
 type PatientFormProps = {
   pending: boolean;
   serverError?: string | null;
   submitLabel?: string;
+  defaultValues?: PatientFormInput;
+  doctors?: DoctorOption[];
+  doctorId?: string;
+  requireDoctor?: boolean;
+  onDoctorChange?: (doctorId: string) => void;
   onSubmit: (values: CreatePatientInput) => void;
   onCancel: () => void;
 };
@@ -53,25 +63,65 @@ export function PatientForm({
   pending,
   serverError,
   submitLabel = "Add patient",
+  defaultValues = emptyValues,
+  doctors,
+  doctorId = "",
+  requireDoctor = false,
+  onDoctorChange,
   onSubmit,
   onCancel,
 }: PatientFormProps) {
   const formId = useId();
+  const [doctorError, setDoctorError] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<PatientFormInput, unknown, PatientFormValues>({
     resolver: zodResolver(patientFormSchema),
-    defaultValues: emptyValues,
+    defaultValues,
   });
+
+  const doctorChoices =
+    doctorId && doctors && !doctors.some((doctor) => doctor.id === doctorId)
+      ? [{ id: doctorId, name: "Current doctor" }, ...doctors]
+      : (doctors ?? []);
 
   return (
     <form
       className="grid gap-4"
-      onSubmit={handleSubmit((values) => onSubmit(toCreatePatient(values)))}
+      onSubmit={handleSubmit((values) => {
+        if (requireDoctor && !doctorId) {
+          setDoctorError("Choose a doctor.");
+          return;
+        }
+        setDoctorError(null);
+        onSubmit(toCreatePatient(values));
+      })}
       noValidate
     >
+      {doctors ? (
+        <FormField id={`${formId}-doctor`} label="Doctor" error={doctorError ?? undefined}>
+          <select
+            id={`${formId}-doctor`}
+            className={fieldClass}
+            value={doctorId}
+            aria-invalid={doctorError ? true : undefined}
+            aria-describedby={doctorError ? `${formId}-doctor-error` : undefined}
+            onChange={(event) => {
+              setDoctorError(null);
+              onDoctorChange?.(event.target.value);
+            }}
+          >
+            <option value="">Choose a doctor</option>
+            {doctorChoices.map((doctor) => (
+              <option key={doctor.id} value={doctor.id}>
+                {doctor.name}
+              </option>
+            ))}
+          </select>
+        </FormField>
+      ) : null}
       <FormField id={`${formId}-name`} label="Name" error={errors.name?.message}>
         <input
           id={`${formId}-name`}

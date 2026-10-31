@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
-import { PageFrame } from "@/components/layout/PageFrame";
-import { PageHeader } from "@/components/layout/PageHeader";
+import { PatientsView } from "@/components/patients/PatientsView";
+import { ListSkeleton } from "@/components/shared/Skeletons";
+import { pageClass } from "@/lib/page";
 
 export const metadata: Metadata = {
   title: "Patients",
@@ -10,13 +11,14 @@ export const metadata: Metadata = {
 
 export default function PatientsPage() {
   return (
-    <Suspense>
-      <PageFrame>
-        <PageHeader
-          title="Patients"
-          description="The patient list, search, and filters will show here."
-        />
-      </PageFrame>
+    <Suspense
+      fallback={
+        <div className={pageClass}>
+          <ListSkeleton rows={8} />
+        </div>
+      }
+    >
+      <PatientsView />
     </Suspense>
   );
 }
