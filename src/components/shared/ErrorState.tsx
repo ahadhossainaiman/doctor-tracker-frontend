@@ -20,7 +20,7 @@ export function ErrorState({ title, description, onRetry }: ErrorStateProps) {
       variants={variants}
       initial="hidden"
       animate="visible"
-      className="flex flex-col items-start gap-3 rounded-card border border-border bg-surface-raised px-5 py-8 sm:px-6 sm:py-10"
+      className="panel flex flex-col items-start gap-3 rounded-card px-5 py-8 sm:px-6 sm:py-10"
     >
       <h2 className="text-lg font-semibold text-text sm:text-xl">{title}</h2>
       <p className="max-w-md text-sm text-text-muted">{description}</p>

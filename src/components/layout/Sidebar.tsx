@@ -19,7 +19,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "sticky top-0 hidden h-svh shrink-0 flex-col border-r border-border bg-surface-raised transition-[width] duration-200 ease-out md:flex",
+        "sticky top-0 hidden h-svh shrink-0 flex-col border-r border-border bg-surface-raised shadow-[8px_0_28px_-18px_oklch(0.2_0.02_270/0.35)] transition-[width] duration-200 ease-out md:flex dark:shadow-[8px_0_28px_-12px_oklch(0_0_0/0.55)]",
         collapsed ? "w-[72px] lg:w-[72px]" : "w-[220px] lg:w-[240px] xl:w-[264px]",
       )}
     >

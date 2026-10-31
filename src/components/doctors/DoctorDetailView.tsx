@@ -106,7 +106,7 @@ export function DoctorDetailView({ id }: { id: string }) {
           </Button>
         }
       />
-      <dl className="lift-card grid gap-4 rounded-card border border-border bg-surface-raised p-4 shadow-card min-[480px]:p-5 sm:grid-cols-2 lg:grid-cols-4">
+      <dl className="panel lift-card grid gap-4 rounded-card p-4 min-[480px]:p-5 sm:grid-cols-2 lg:grid-cols-4">
         <ProfileItem label="Phone">
           <a className="underline-offset-4 hover:underline focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none" href={`tel:${profile.phone}`}>
             {profile.phone}

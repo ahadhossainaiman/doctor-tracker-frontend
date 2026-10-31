@@ -1,22 +1,22 @@
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { Suspense } from "react";
 
-import { PageFrame } from "@/components/layout/PageFrame";
-import { PageHeader } from "@/components/layout/PageHeader";
+import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
 
 export const metadata: Metadata = {
   title: "Dashboard",
 };
 
+const DashboardView = dynamic(
+  () => import("@/components/dashboard/DashboardView").then((mod) => mod.DashboardView),
+  { loading: () => <DashboardSkeleton /> },
+);
+
 export default function DashboardPage() {
   return (
-    <Suspense>
-      <PageFrame>
-        <PageHeader
-          title="Dashboard"
-          description="Totals, charts, and recent activity will show here."
-        />
-      </PageFrame>
+    <Suspense fallback={<DashboardSkeleton />}>
+      <DashboardView />
     </Suspense>
   );
 }

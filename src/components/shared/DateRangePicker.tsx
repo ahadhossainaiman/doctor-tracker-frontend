@@ -14,7 +14,7 @@ export function DateRangePicker({ from, to, onChange }: DateRangePickerProps) {
   const id = useId();
 
   return (
-    <fieldset className="grid gap-3 sm:grid-cols-2">
+    <fieldset className="grid min-w-0 gap-3 sm:grid-cols-2 md:min-w-72 md:flex-1">
       <legend className="sr-only">Date range</legend>
       <div className="grid gap-1">
         <label htmlFor={`${id}-from`} className={fieldLabelClass}>

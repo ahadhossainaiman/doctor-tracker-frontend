@@ -21,6 +21,12 @@ export const fadeRise: Variants = {
   visible: { opacity: 1, y: 0, transition: enterTransition },
 };
 
+/** Opacity only. A transform on the page would stop table headers from sticking. */
+export const pageEnter: Variants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: enterTransition },
+};
+
 export const fadeScale: Variants = {
   hidden: { opacity: 0, scale: 0.98 },
   visible: { opacity: 1, scale: 1, transition: enterTransition },

@@ -167,10 +167,7 @@ export function DoctorsView() {
           options={filters.data?.hospitals ?? []}
           onChange={(value) => url.setFilter("hospital", value)}
         />
-        <div className="grid min-w-0 gap-1 md:min-w-72">
-          <span className={fieldLabelClass}>Created</span>
-          <DateRangePicker from={url.from} to={url.to} onChange={url.setRange} />
-        </div>
+        <DateRangePicker from={url.from} to={url.to} onChange={url.setRange} />
       </FilterBar>
       {filters.isError ? (
         <div className="flex flex-wrap items-center gap-3" role="alert">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import { PatientForm } from "@/components/patients/PatientForm";
@@ -40,27 +40,7 @@ function formValues(patient: Patient) {
 export function EditPatientSheet({ patientId, open, onOpenChange }: EditPatientSheetProps) {
   const patient = usePatient(open && patientId ? patientId : "");
   const update = useUpdatePatient(patientId ?? "");
-  const [doctorId, setDoctorId] = useState("");
-  const [doctorQuery, setDoctorQuery] = useState("");
-  const debouncedQuery = useDebounce(doctorQuery, 300);
-  const doctors = useDoctors({
-    q: debouncedQuery || undefined,
-    sort: "name",
-    order: "asc",
-    page: 1,
-    limit: 20,
-  });
-
-  useEffect(() => {
-    if (patient.data) setDoctorId(patient.data.doctor);
-  }, [patient.data]);
-
-  const choices = doctors.data?.data ?? [];
   const current = patient.data;
-  const doctorOptions =
-    current && doctorId === current.doctor && !choices.some((doctor) => doctor.id === current.doctor)
-      ? [{ id: current.doctor, name: current.doctorName ?? "Current doctor" }, ...choices]
-      : choices;
 
   return (
     <Sheet
@@ -84,48 +64,92 @@ export function EditPatientSheet({ patientId, open, onOpenChange }: EditPatientS
             {apiErrorMessage(patient.error)}
           </p>
         ) : (
-          <>
-            <div className="grid gap-1">
-              <label htmlFor="edit-patient-doctor-search" className={fieldLabelClass}>
-                Find a doctor
-              </label>
-              <input
-                id="edit-patient-doctor-search"
-                className={fieldClass}
-                value={doctorQuery}
-                placeholder="Name, specialization, or hospital"
-                onChange={(event) => setDoctorQuery(event.target.value)}
-              />
-            </div>
-            <PatientForm
-              key={`${current.id}-${current.updatedAt}`}
-              pending={update.isPending}
-              serverError={update.error ? apiErrorMessage(update.error) : null}
-              submitLabel="Save changes"
-              defaultValues={formValues(current)}
-              requireDoctor
-              doctors={doctorOptions.map((doctor) => ({ id: doctor.id, name: doctor.name }))}
-              doctorId={doctorId}
-              onDoctorChange={setDoctorId}
-              onCancel={() => onOpenChange(false)}
-              onSubmit={(values) => {
-                const input: UpdatePatientInput = {
-                  ...values,
-                  doctor: doctorId,
-                  email: values.email ?? "",
-                  notes: values.notes ?? "",
-                };
-                update.mutate(input, {
-                  onSuccess: () => {
-                    toast.success("Patient updated");
-                    onOpenChange(false);
-                  },
-                });
-              }}
-            />
-          </>
+          <EditPatientForm
+            key={current.id}
+            patient={current}
+            pending={update.isPending}
+            serverError={update.error ? apiErrorMessage(update.error) : null}
+            onCancel={() => onOpenChange(false)}
+            onSubmit={(input) => {
+              update.mutate(input, {
+                onSuccess: () => {
+                  toast.success("Patient updated");
+                  onOpenChange(false);
+                },
+                onError: (error) => {
+                  toast.error(apiErrorMessage(error));
+                },
+              });
+            }}
+          />
         )}
       </SheetContent>
     </Sheet>
+  );
+}
+
+function EditPatientForm({
+  patient,
+  pending,
+  serverError,
+  onCancel,
+  onSubmit,
+}: {
+  patient: Patient;
+  pending: boolean;
+  serverError: string | null;
+  onCancel: () => void;
+  onSubmit: (input: UpdatePatientInput) => void;
+}) {
+  const [doctorId, setDoctorId] = useState(patient.doctor);
+  const [doctorQuery, setDoctorQuery] = useState("");
+  const debouncedQuery = useDebounce(doctorQuery, 300);
+  const doctors = useDoctors({
+    q: debouncedQuery || undefined,
+    sort: "name",
+    order: "asc",
+    page: 1,
+    limit: 20,
+  });
+  const choices = doctors.data?.data ?? [];
+  const doctorOptions =
+    !choices.some((doctor) => doctor.id === patient.doctor)
+      ? [{ id: patient.doctor, name: patient.doctorName ?? "Current doctor" }, ...choices]
+      : choices;
+
+  return (
+    <>
+      <div className="grid gap-1">
+        <label htmlFor="edit-patient-doctor-search" className={fieldLabelClass}>
+          Find a doctor
+        </label>
+        <input
+          id="edit-patient-doctor-search"
+          className={fieldClass}
+          value={doctorQuery}
+          placeholder="Name, specialization, or hospital"
+          onChange={(event) => setDoctorQuery(event.target.value)}
+        />
+      </div>
+      <PatientForm
+        pending={pending}
+        serverError={serverError}
+        submitLabel="Save changes"
+        defaultValues={formValues(patient)}
+        requireDoctor
+        doctors={doctorOptions.map((doctor) => ({ id: doctor.id, name: doctor.name }))}
+        doctorId={doctorId}
+        onDoctorChange={setDoctorId}
+        onCancel={onCancel}
+        onSubmit={(values) => {
+          onSubmit({
+            ...values,
+            doctor: doctorId,
+            email: values.email ?? "",
+            notes: values.notes ?? "",
+          });
+        }}
+      />
+    </>
   );
 }

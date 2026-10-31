@@ -212,36 +212,35 @@ export function PatientsView() {
           labels={{ male: "Male", female: "Female", other: "Other" }}
           onChange={(value) => url.setFilter("gender", value)}
         />
-        <div className="grid min-w-0 gap-1 md:min-w-56 md:flex-1">
-          <label htmlFor={`${formId}-doctor-search`} className={fieldLabelClass}>
+        <div className="grid min-w-0 gap-1 md:min-w-72 md:flex-1">
+          <label htmlFor={`${formId}-doctor`} className={fieldLabelClass}>
             Doctor
           </label>
-          <input
-            id={`${formId}-doctor-search`}
-            className={fieldClass}
-            value={doctorQuery}
-            placeholder="Find a doctor"
-            onChange={(event) => setDoctorQuery(event.target.value)}
-          />
-          <select
-            id={`${formId}-doctor`}
-            className={fieldClass}
-            aria-label="Filter by doctor"
-            value={url.filters.doctor}
-            onChange={(event) => url.setFilter("doctor", event.target.value)}
-          >
-            <option value="">All doctors</option>
-            {doctorSelectOptions.map((doctor) => (
-              <option key={doctor.id} value={doctor.id}>
-                {doctor.name}
-              </option>
-            ))}
-          </select>
+          <div className="grid grid-cols-2 gap-2">
+            <input
+              id={`${formId}-doctor-search`}
+              className={fieldClass}
+              value={doctorQuery}
+              placeholder="Find a doctor"
+              aria-label="Find a doctor"
+              onChange={(event) => setDoctorQuery(event.target.value)}
+            />
+            <select
+              id={`${formId}-doctor`}
+              className={fieldClass}
+              value={url.filters.doctor}
+              onChange={(event) => url.setFilter("doctor", event.target.value)}
+            >
+              <option value="">All doctors</option>
+              {doctorSelectOptions.map((doctor) => (
+                <option key={doctor.id} value={doctor.id}>
+                  {doctor.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
-        <div className="grid min-w-0 gap-1 md:min-w-72">
-          <span className={fieldLabelClass}>Registered</span>
-          <DateRangePicker from={url.from} to={url.to} onChange={url.setRange} />
-        </div>
+        <DateRangePicker from={url.from} to={url.to} onChange={url.setRange} />
       </FilterBar>
       {filters.isError ? (
         <div className="flex flex-wrap items-center gap-3" role="alert">

@@ -74,7 +74,7 @@ export function DataTable<T>({
             <motion.article
               key={getRowId(row)}
               variants={item}
-              className="lift-card rounded-card border border-border bg-surface-raised p-4 shadow-card min-[480px]:p-5"
+              className="panel lift-card rounded-card p-4 min-[480px]:p-5"
             >
               {titleColumn ? (
                 <h3 className="text-base font-semibold text-text">{titleColumn.cell(row)}</h3>
@@ -92,12 +92,12 @@ export function DataTable<T>({
           );
         })}
       </motion.div>
-      <div className="hidden overflow-x-auto rounded-card border border-border bg-surface-raised shadow-card md:block">
-        <table className="w-full border-separate border-spacing-0 text-sm">
+      <div className="panel hidden rounded-card md:block">
+        <table className="w-full border-separate border-spacing-0 text-left text-sm">
           <caption className="sr-only">{label}</caption>
-          <thead className={cn("sticky z-10 bg-surface-raised/95 backdrop-blur-md", stickyClassName)}>
+          <thead>
             <tr>
-              {columns.map((column) => {
+              {columns.map((column, index) => {
                 const active = column.sortKey !== undefined && column.sortKey === sort;
                 const ariaSort = !column.sortKey
                   ? undefined
@@ -112,7 +112,10 @@ export function DataTable<T>({
                     scope="col"
                     aria-sort={ariaSort}
                     className={cn(
-                      "border-b border-border px-3 text-left font-medium text-text lg:px-4",
+                      "sticky z-20 h-12 border-b border-border bg-surface-raised px-4 align-middle font-medium whitespace-nowrap text-text shadow-[inset_0_-1px_0_var(--border)]",
+                      stickyClassName,
+                      index === 0 && "rounded-tl-[14px]",
+                      !rowActions && index === columns.length - 1 && "rounded-tr-[14px]",
                       column.hideBelow ? hideClass[column.hideBelow] : undefined,
                       column.className,
                     )}
@@ -134,24 +137,26 @@ export function DataTable<T>({
                 );
               })}
               {rowActions ? (
-                <th scope="col" className="border-b border-border px-3 text-right font-medium text-text lg:px-4">
-                  <span className="inline-flex h-11 items-center">Actions</span>
+                <th
+                  scope="col"
+                  className={cn(
+                    "sticky z-20 h-12 rounded-tr-[14px] border-b border-border bg-surface-raised px-4 text-right align-middle font-medium whitespace-nowrap text-text shadow-[inset_0_-1px_0_var(--border)]",
+                    stickyClassName,
+                  )}
+                >
+                  <span className="inline-flex h-11 w-full items-center justify-end">Actions</span>
                 </th>
               ) : null}
             </tr>
           </thead>
-          <motion.tbody variants={group} initial="hidden" animate="visible">
+          <tbody>
             {rows.map((row) => (
-              <motion.tr
-                key={getRowId(row)}
-                variants={item}
-                className="transition-colors duration-150 hover:bg-muted/70"
-              >
+              <tr key={getRowId(row)} className="transition-colors duration-150 hover:bg-muted/70">
                 {columns.map((column) => (
                   <td
                     key={column.id}
                     className={cn(
-                      "border-b border-border px-3 py-3 text-text lg:px-4",
+                      "border-b border-border px-4 py-3 align-middle text-text",
                       column.hideBelow ? hideClass[column.hideBelow] : undefined,
                       column.className,
                     )}
@@ -160,11 +165,13 @@ export function DataTable<T>({
                   </td>
                 ))}
                 {rowActions ? (
-                  <td className="border-b border-border px-3 py-3 text-right lg:px-4">{rowActions(row)}</td>
+                  <td className="border-b border-border px-4 py-3 text-right align-middle whitespace-nowrap">
+                    <div className="inline-flex items-center justify-end gap-2">{rowActions(row)}</div>
+                  </td>
                 ) : null}
-              </motion.tr>
+              </tr>
             ))}
-          </motion.tbody>
+          </tbody>
         </table>
       </div>
     </>

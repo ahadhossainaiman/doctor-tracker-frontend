@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 import { apiClient, ApiError, redirectToLogin } from "@/lib/apiClient";
@@ -56,6 +57,9 @@ export function useLogout() {
       onSuccess: () => {
         queryClient.clear();
         redirectToLogin();
+      },
+      onError: (error) => {
+        toast.error(authErrorMessage(error));
       },
     });
   };

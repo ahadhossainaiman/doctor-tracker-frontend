@@ -33,7 +33,7 @@ export function MobileBottomNav({
       <nav
         aria-label="Primary"
         className={cn(
-          "grid grid-cols-3 border-t border-border bg-surface-raised/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl",
+          "grid grid-cols-3 border-t border-border bg-surface-raised/90 pb-[env(safe-area-inset-bottom)] shadow-[0_-12px_28px_-18px_oklch(0.2_0.02_270/0.4)] backdrop-blur-xl dark:shadow-[0_-14px_32px_-16px_oklch(0_0_0/0.65)]",
           className,
         )}
       >

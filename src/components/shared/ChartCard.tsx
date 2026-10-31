@@ -11,6 +11,7 @@ const DEFAULT_RANGES = ["7d", "30d", "90d", "12m"] as const;
 export type ChartPoint = {
   label: string;
   value: number;
+  href?: string;
 };
 
 type ChartCardProps = {
@@ -19,7 +20,13 @@ type ChartCardProps = {
   range?: string;
   ranges?: readonly string[];
   onRangeChange?: (range: string) => void;
+  interval?: string;
+  intervals?: readonly string[];
+  onIntervalChange?: (interval: string) => void;
   loading?: boolean;
+  error?: string | null;
+  onRetry?: () => void;
+  emptyLabel?: string;
   children?: ReactNode;
 };
 
@@ -29,16 +36,23 @@ export function ChartCard({
   range = "30d",
   ranges = DEFAULT_RANGES,
   onRangeChange,
+  interval,
+  intervals = [],
+  onIntervalChange,
   loading = false,
+  error,
+  onRetry,
+  emptyLabel = "No data yet.",
   children,
 }: ChartCardProps) {
   const [showData, setShowData] = useState(false);
 
   return (
-    <section className="lift-card @container rounded-card border border-border bg-surface-raised p-5 shadow-card">
+    <section className="panel lift-card flex h-full flex-col @container rounded-card p-5">
       <div className="flex flex-col gap-3 @md:flex-row @md:items-center @md:justify-between">
         <h2 className="text-xl font-semibold tracking-tight text-text">{title}</h2>
         <div className="flex flex-wrap items-center gap-2">
+          {ranges.length > 0 ? (
           <div role="radiogroup" aria-label={`${title} range`} className="flex flex-wrap gap-1">
             {ranges.map((item) => {
               const selected = item === range;
@@ -58,21 +72,54 @@ export function ChartCard({
               );
             })}
           </div>
+          ) : null}
+          {intervals.length > 0 ? (
+            <div role="radiogroup" aria-label={`${title} interval`} className="flex flex-wrap gap-1">
+              {intervals.map((item) => {
+                const selected = item === interval;
+                return (
+                  <Button
+                    key={item}
+                    type="button"
+                    role="radio"
+                    aria-checked={selected}
+                    variant={selected ? "default" : "outline"}
+                    className="h-11 px-3 capitalize"
+                    disabled={loading}
+                    onClick={() => onIntervalChange?.(item)}
+                  >
+                    {item}
+                  </Button>
+                );
+              })}
+            </div>
+          ) : null}
           <Button
             type="button"
             variant="outline"
             className="h-11 px-3"
             aria-pressed={showData}
-            disabled={loading}
+            disabled={loading || Boolean(error)}
             onClick={() => setShowData((current) => !current)}
           >
             View data
           </Button>
         </div>
       </div>
-      <div className="mt-4 min-h-48">
+      <div className="mt-4 min-h-48 flex-1">
         {loading ? (
           <ChartCardSkeleton />
+        ) : error ? (
+          <div role="alert" className="flex h-48 flex-col items-start justify-center gap-3">
+            <p className="text-sm text-text-muted">{error}</p>
+            {onRetry ? (
+              <Button type="button" className="h-11 px-4" onClick={onRetry}>
+                Retry
+              </Button>
+            ) : null}
+          </div>
+        ) : data.length === 0 ? (
+          <p className="flex h-48 items-center text-sm text-text-muted">{emptyLabel}</p>
         ) : showData ? (
           <div className="max-h-48 overflow-auto">
             <table className="w-full text-sm">
