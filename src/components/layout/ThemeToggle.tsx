@@ -13,13 +13,13 @@ export function ThemeToggle() {
     <Button
       type="button"
       variant="outline"
-      className="h-11 px-4"
+      className="h-11 w-11 px-0 md:w-auto md:px-4"
       aria-label="Toggle color theme"
       onClick={() => setTheme(nextTheme)}
     >
       <Sun className="hidden dark:block" />
       <Moon className="block dark:hidden" />
-      Theme
+      <span className="hidden md:inline">Theme</span>
     </Button>
   );
 }

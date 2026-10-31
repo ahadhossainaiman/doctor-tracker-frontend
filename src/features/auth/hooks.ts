@@ -36,7 +36,7 @@ export function useLogin() {
     mutation.mutate(input, {
       onSuccess: async () => {
         await queryClient.invalidateQueries({ queryKey: authKeys.me });
-        router.replace(safeNext(next) ?? "/");
+        router.replace(safeNext(next) ?? "/dashboard");
         router.refresh();
       },
     });

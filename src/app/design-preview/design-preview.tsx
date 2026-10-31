@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { CommandPalette } from "@/components/layout/CommandPalette";
 import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { ChartCard, type ChartPoint } from "@/components/shared/ChartCard";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { EmptyState } from "@/components/shared/EmptyState";
@@ -208,7 +209,12 @@ export function DesignPreview() {
       <PageHeader
         title="Design preview"
         description="Temporary gallery for light, dark, 360px, and desktop. Remove this route in F8."
-        actions={<CommandPalette />}
+        actions={
+          <>
+            <ThemeToggle />
+            <CommandPalette />
+          </>
+        }
       />
       <div className="grid items-start gap-8 xl:grid-cols-[360px_minmax(0,1fr)]">
         <section className="@container w-full max-w-[360px] overflow-hidden rounded-sheet border border-border bg-surface">

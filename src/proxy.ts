@@ -15,7 +15,7 @@ export function proxy(request: NextRequest) {
   if (pathname === "/login") {
     const sessionExpired = request.nextUrl.searchParams.get("session") === "expired";
     if (!hasSession || sessionExpired) return NextResponse.next();
-    const destination = safeNext(request.nextUrl.searchParams.get("next")) ?? "/";
+    const destination = safeNext(request.nextUrl.searchParams.get("next")) ?? "/dashboard";
     return NextResponse.redirect(new URL(destination, request.url));
   }
 
