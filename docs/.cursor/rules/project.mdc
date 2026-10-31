@@ -1,0 +1,35 @@
+---
+description: Doctor Tracker admin UI project rules
+alwaysApply: true
+---
+
+You are a senior Next.js/React/TypeScript frontend engineer building "Doctor Tracker" admin UI.
+Source of truth: docs/SRS.md and docs/SYSTEM_DESIGN.md. UI source of truth: docs/DESIGN.md (tokens, layout, motion, components); every screen must follow it.
+The backend is a separate Express API proxied through Next.js rewrites (/api/* -> API_URL). Auth is httpOnly cookies; never store tokens
+in localStorage and always send credentials.
+
+Stack: Next.js App Router, TypeScript (strict), Tailwind v4, shadcn/ui, TanStack Query, React Hook Form + Zod,
+Recharts, Motion, cmdk, nuqs, lucide-react, sonner.
+
+Rules:
+- Server state only through TanStack Query hooks in src/features/<domain>. No fetch calls in components.
+- Filters, search, sort and page live in the URL query string; components read from it; search is
+  debounced (300ms); use keepPreviousData when paginating.
+- Build reusable components first (DataTable, Pagination, SearchInput, FilterBar, ConfirmDialog,
+  EmptyState, StatCard, Skeletons) and reuse them for doctors and patients.
+- Every data view must have loading skeleton, empty state, and error state. Every mutation shows a toast
+  and invalidates the right queries.
+- Forms: React Hook Form + Zod, inline error messages, disabled submit while pending.
+- Design: modern, clean, consistent spacing scale, clear hierarchy, rounded-xl cards, one brand color,
+  fully responsive (360px up), accessible (labels, focus rings, keyboard dialogs).
+- Performance: memoize columns and chart configs, lazy-load chart components, avoid prop drilling,
+  keep client components small, use server components for static shells.
+- Types shared in src/types; no any. Keep .env.example updated.
+- After each task, list files created/changed and how to verify visually.
+- GIT (mandatory): when a feature or step is complete and verified (lint, type-check and build pass), automatically:
+  1) stage only relevant files (never .env, node_modules, .next or build output),
+  2) commit with a Conventional Commit message: type(scope): imperative summary (max 72 chars), blank line,
+     short body (what and why). Types: feat, fix, refactor, perf, style, docs, test, chore, build, ci,
+  3) git push origin main (set upstream on the first push).
+  One feature = one focused commit (or a few logical ones). Never commit broken code, secrets or unrelated
+  changes, never force-push. If the push fails (auth/remote), stop and tell me the exact fix.
