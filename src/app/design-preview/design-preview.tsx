@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { toast } from "sonner";
 
 import { CommandPalette } from "@/components/layout/CommandPalette";
@@ -22,6 +22,8 @@ import { StatCard } from "@/components/shared/StatCard";
 import { showUndoToast } from "@/components/shared/undo-toast";
 import { Button } from "@/components/ui/button";
 import { fadeRise, sheet, stagger, useSafeVariants } from "@/lib/motion";
+
+import { ListToolkitPreview } from "./list-toolkit-preview";
 
 const sparkline = [8, 12, 10, 14, 18, 16, 22, 20];
 
@@ -216,6 +218,9 @@ export function DesignPreview() {
           </>
         }
       />
+      <Suspense fallback={<ListSkeleton rows={6} />}>
+        <ListToolkitPreview />
+      </Suspense>
       <div className="grid items-start gap-8 xl:grid-cols-[360px_minmax(0,1fr)]">
         <section className="@container w-full max-w-[360px] overflow-hidden rounded-sheet border border-border bg-surface">
           <h2 className="border-b border-border px-4 py-3 text-sm font-medium text-text-muted">
