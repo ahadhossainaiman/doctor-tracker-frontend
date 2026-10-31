@@ -36,6 +36,7 @@ export function crumbsFor(pathname: string) {
 }
 
 function labelForSegment(segment: string) {
+  if (/^[a-f0-9]{24}$/i.test(segment)) return "Profile";
   const text = decodeURIComponent(segment).replaceAll("-", " ");
   return text.charAt(0).toUpperCase() + text.slice(1);
 }

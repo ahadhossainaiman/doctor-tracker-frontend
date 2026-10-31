@@ -10,6 +10,11 @@ export function setUnauthorizedHandler(handler: (() => void) | null) {
   unauthorizedHandler = handler;
 }
 
+export function apiErrorMessage(error: unknown) {
+  if (error instanceof ApiError || error instanceof Error) return error.message;
+  return "Something went wrong. Try again.";
+}
+
 export class ApiError extends Error {
   readonly status: number;
   readonly code: string;

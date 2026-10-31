@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { Suspense, useState, type ReactNode } from "react";
 
 import { CommandPaletteRoot } from "@/components/layout/CommandPalette";
 import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
@@ -21,16 +21,34 @@ export function DashboardShell({ children }: { children: ReactNode }) {
         >
           Skip to content
         </a>
-        <Sidebar collapsed={collapsed} onToggle={() => setCollapsed((current) => !current)} />
+        <Suspense fallback={<SidebarFallback />}>
+          <Sidebar collapsed={collapsed} onToggle={() => setCollapsed((current) => !current)} />
+        </Suspense>
         <div className="flex min-w-0 flex-1 flex-col">
-          <Topbar onOpenMenu={() => setMenuOpen(true)} />
+          <Suspense fallback={<TopbarFallback />}>
+            <Topbar onOpenMenu={() => setMenuOpen(true)} />
+          </Suspense>
           <div id="main" className="flex-1 pb-14 md:pb-0">
             {children}
           </div>
         </div>
       </div>
-      <MobileBottomNav className="fixed inset-x-0 bottom-0 z-30 md:hidden" />
-      <MobileMenu open={menuOpen} onOpenChange={setMenuOpen} />
+      <Suspense fallback={<div className="fixed inset-x-0 bottom-0 z-30 h-14 border-t border-border bg-surface-raised md:hidden" />}>
+        <MobileBottomNav className="fixed inset-x-0 bottom-0 z-30 md:hidden" />
+      </Suspense>
+      <Suspense fallback={null}>
+        <MobileMenu open={menuOpen} onOpenChange={setMenuOpen} />
+      </Suspense>
     </CommandPaletteRoot>
   );
+}
+
+function SidebarFallback() {
+  return (
+    <div className="sticky top-0 hidden h-svh w-[264px] shrink-0 border-r border-border bg-surface-raised md:block" />
+  );
+}
+
+function TopbarFallback() {
+  return <div className="sticky top-0 z-30 h-16 border-b border-border bg-surface-raised" />;
 }

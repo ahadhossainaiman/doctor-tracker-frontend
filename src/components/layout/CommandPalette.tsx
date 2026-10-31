@@ -147,7 +147,16 @@ function CommandPaletteDialog({
                   className="flex h-11 cursor-pointer items-center rounded-lg px-3 text-sm data-[selected=true]:bg-accent"
                   onSelect={() => {
                     onOpenChange(false);
-                    toast(`${item} is not connected yet`);
+                    if (item === "Add doctor") {
+                      const onDoctors = window.location.pathname === "/doctors";
+                      const params = new URLSearchParams(
+                        onDoctors ? window.location.search : "",
+                      );
+                      params.set("create", "1");
+                      router.push(`/doctors?${params.toString()}`);
+                      return;
+                    }
+                    toast("Open a doctor, then add a patient.");
                   }}
                 >
                   {item}
