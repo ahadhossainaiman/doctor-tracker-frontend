@@ -54,14 +54,17 @@ function resolvePath(path: string) {
   return `${API_PREFIX}/${path}`;
 }
 
-function redirectToLogin() {
+export function redirectToLogin(options?: { expired?: boolean }) {
   if (typeof window === "undefined") return;
   if (window.location.pathname === "/login") return;
 
   const next = `${window.location.pathname}${window.location.search}`;
+  const params = new URLSearchParams();
+  if (options?.expired) params.set("session", "expired");
+  params.set("next", next);
   // Reload so login starts with a fresh query cache and the route guard.
   // eslint-disable-next-line @next/next/no-location-assign-relative-destination
-  window.location.assign(`/login?next=${encodeURIComponent(next)}`);
+  window.location.assign(`/login?${params.toString()}`);
 }
 
 function toApiError(status: number, payload: unknown) {
@@ -74,17 +77,44 @@ function toApiError(status: number, payload: unknown) {
     );
   }
 
+  if (status === 0 || status >= 500) {
+    return new ApiError(status, "UPSTREAM", "Unable to reach the server.");
+  }
+
   return new ApiError(status, "REQUEST_FAILED", "Request failed.");
 }
 
+let refreshPromise: Promise<boolean> | null = null;
+
+function refreshSession() {
+  if (!refreshPromise) {
+    refreshPromise = fetch(resolvePath("/auth/refresh"), {
+      method: "POST",
+      credentials: "include",
+    })
+      .then((response) => response.ok)
+      .catch(() => false)
+      .finally(() => {
+        refreshPromise = null;
+      });
+  }
+
+  return refreshPromise;
+}
+
+type ApiRequest = RequestInit & {
+  retry?: boolean;
+};
+
 export async function apiClient<T>(
   path: string,
-  init?: RequestInit,
+  init?: ApiRequest,
 ): Promise<ApiSuccess<T>> {
+  const { retry = false, ...requestInit } = init ?? {};
   const url = resolvePath(path);
-  const headers = new Headers(init?.headers);
+  const headers = new Headers(requestInit.headers);
 
-  if (init?.body !== undefined && !headers.has("Content-Type")) {
+  if (requestInit.body !== undefined && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }
 
@@ -92,7 +122,7 @@ export async function apiClient<T>(
 
   try {
     response = await fetch(url, {
-      ...init,
+      ...requestInit,
       headers,
       credentials: "include",
     });
@@ -111,15 +141,18 @@ export async function apiClient<T>(
     }
   }
 
-  if (!response.ok || !isApiSuccess<T>(payload)) {
-    if (
-      response.status === 401 &&
-      !PUBLIC_AUTH_PATHS.some((publicPath) => url.includes(publicPath))
-    ) {
-      if (unauthorizedHandler) unauthorizedHandler();
-      else redirectToLogin();
-    }
+  const isPublicAuth = PUBLIC_AUTH_PATHS.some((publicPath) =>
+    url.includes(publicPath),
+  );
 
+  if (response.status === 401 && !retry && !isPublicAuth) {
+    const refreshed = await refreshSession();
+    if (refreshed) return apiClient<T>(path, { ...init, retry: true });
+    if (unauthorizedHandler) unauthorizedHandler();
+    else redirectToLogin({ expired: true });
+  }
+
+  if (!response.ok || !isApiSuccess<T>(payload)) {
     throw toApiError(response.status, payload);
   }
 

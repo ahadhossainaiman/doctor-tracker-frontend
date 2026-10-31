@@ -14,9 +14,7 @@ export function ThemeToggle() {
       type="button"
       variant="outline"
       className="h-11 px-4"
-      aria-label={
-        nextTheme === "dark" ? "Switch to dark theme" : "Switch to light theme"
-      }
+      aria-label="Toggle color theme"
       onClick={() => setTheme(nextTheme)}
     >
       <Sun className="hidden dark:block" />

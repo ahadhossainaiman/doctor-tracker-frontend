@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { Button } from "@/components/ui/button";
 
@@ -12,7 +11,6 @@ export function PlaceholderActions() {
 
   return (
     <>
-      <ThemeToggle />
       <Button
         type="button"
         className="h-11 px-4"
