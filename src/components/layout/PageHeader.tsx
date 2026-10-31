@@ -4,15 +4,23 @@ type PageHeaderProps = {
   title: string;
   description?: string;
   actions?: ReactNode;
+  heading?: "h1" | "h2";
 };
 
-export function PageHeader({ title, description, actions }: PageHeaderProps) {
+export function PageHeader({
+  title,
+  description,
+  actions,
+  heading = "h1",
+}: PageHeaderProps) {
+  const Heading = heading;
+
   return (
     <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div className="space-y-1">
-        <h1 className="text-2xl font-semibold tracking-tight text-text">
+        <Heading className="text-2xl font-semibold tracking-tight text-text">
           {title}
-        </h1>
+        </Heading>
         {description ? (
           <p className="max-w-2xl text-sm text-text-muted">{description}</p>
         ) : null}

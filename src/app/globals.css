@@ -61,8 +61,15 @@
   --radius-sheet: 20px;
   --text-3xl: 2rem;
   --text-3xl--line-height: 2.4rem;
+  --spacing: 4px;
   --shadow-card: var(--elevation-card);
   --shadow-overlay: var(--elevation-overlay);
+  --color-success-text: var(--success-text);
+  --color-danger-text: var(--danger-text);
+}
+
+@utility tabular-nums {
+  font-variant-numeric: tabular-nums;
 }
 
 :root {
@@ -76,6 +83,9 @@
   --warning: oklch(0.78 0.14 80);
   --danger: oklch(0.58 0.19 25);
   --danger-foreground: oklch(0.985 0.01 25);
+  --success-text: oklch(0.42 0.1 165);
+  --danger-text: oklch(0.46 0.16 25);
+  color-scheme: light;
   --background: var(--surface);
   --foreground: var(--text);
   --card: var(--surface-raised);
@@ -126,6 +136,9 @@
   --warning: oklch(0.82 0.13 85);
   --danger: oklch(0.72 0.16 25);
   --danger-foreground: oklch(0.16 0.02 25);
+  --success-text: oklch(0.82 0.12 165);
+  --danger-text: oklch(0.82 0.13 25);
+  color-scheme: dark;
   --secondary: oklch(0.24 0.014 270);
   --muted: oklch(0.24 0.014 270);
   --accent: oklch(0.28 0.04 276);
@@ -144,5 +157,16 @@
   }
   html {
     @apply font-sans;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

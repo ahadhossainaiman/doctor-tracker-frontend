@@ -1,7 +1,10 @@
+import Link from "next/link";
+
 import { PageHeader } from "@/components/layout/PageHeader";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { ListSkeleton, StatCardSkeleton } from "@/components/shared/Skeletons";
 import { StatCard } from "@/components/shared/StatCard";
+import { Button } from "@/components/ui/button";
 
 import { PlaceholderActions } from "./placeholder-actions";
 
@@ -11,7 +14,14 @@ export default function HomePage() {
       <PageHeader
         title="Doctor Tracker"
         description="Scaffold preview. Login, doctors, patients, and the dashboard are the next steps."
-        actions={<PlaceholderActions />}
+        actions={
+          <>
+            <PlaceholderActions />
+            <Button asChild variant="outline" className="h-11 px-4">
+              <Link href="/design-preview">Design preview</Link>
+            </Button>
+          </>
+        }
       />
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard label="Doctors" value="128" hint="Sample figure" />
